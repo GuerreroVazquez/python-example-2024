@@ -17,6 +17,7 @@ import sys
 
 from helper_code import *
 
+
 ################################################################################
 #
 # Required functions. Edit these functions to add your code, but do not change the arguments of the functions.
@@ -24,6 +25,18 @@ from helper_code import *
 ################################################################################
 
 # Train your digitization model.
+
+def get_model(n_estimators, max_leaf_nodes, random_state, features, dxs, model_folder, classes):
+    model = RandomForestClassifier(
+        n_estimators=n_estimators, max_leaf_nodes=max_leaf_nodes, random_state=random_state).fit(features, dxs)
+
+    # Create a folder for the model if it does not already exist.
+    os.makedirs(model_folder, exist_ok=True)
+
+    # Save the model.
+    save_dx_model(model_folder, model, classes)
+
+
 def train_digitization_model(data_folder, model_folder, verbose):
     # Find data files.
     if verbose:
@@ -45,7 +58,7 @@ def train_digitization_model(data_folder, model_folder, verbose):
     for i in range(num_records):
         if verbose:
             width = len(str(num_records))
-            print(f'- {i+1:>{width}}/{num_records}: {records[i]}...')
+            print(f'- {i + 1:>{width}}/{num_records}: {records[i]}...')
 
         record = os.path.join(data_folder, records[i])
 
@@ -70,6 +83,7 @@ def train_digitization_model(data_folder, model_folder, verbose):
         print('Done.')
         print()
 
+
 # Train your dx classification model.
 def train_dx_model(data_folder, model_folder, verbose):
     # Find data files.
@@ -93,7 +107,7 @@ def train_dx_model(data_folder, model_folder, verbose):
     for i in range(num_records):
         if verbose:
             width = len(str(num_records))
-            print(f'- {i+1:>{width}}/{num_records}: {records[i]}...')
+            print(f'- {i + 1:>{width}}/{num_records}: {records[i]}...')
 
         record = os.path.join(data_folder, records[i])
 
@@ -116,23 +130,16 @@ def train_dx_model(data_folder, model_folder, verbose):
         print('Training the model on the data...')
 
     # Define parameters for random forest classifier and regressor.
-    n_estimators   = 12  # Number of trees in the forest.
+    n_estimators = 12  # Number of trees in the forest.
     max_leaf_nodes = 34  # Maximum number of leaf nodes in each tree.
-    random_state   = 56  # Random state; set for reproducibility.
+    random_state = 56  # Random state; set for reproducibility.
 
     # Fit the model.
-    model = RandomForestClassifier(
-        n_estimators=n_estimators, max_leaf_nodes=max_leaf_nodes, random_state=random_state).fit(features, dxs)
-
-    # Create a folder for the model if it does not already exist.
-    os.makedirs(model_folder, exist_ok=True)
-
-    # Save the model.
-    save_dx_model(model_folder, model, classes)
-
+    get_model(n_estimators, max_leaf_nodes, random_state, features, dxs, model_folder, classes)
     if verbose:
         print('Done.')
         print()
+
 
 # Load your trained digitization model. This function is *required*. You should edit this function to add your code, but do *not*
 # change the arguments of this function. If you do not train a digitization model, then you can return None.
@@ -140,11 +147,13 @@ def load_digitization_model(model_folder, verbose):
     filename = os.path.join(model_folder, 'digitization_model.sav')
     return joblib.load(filename)
 
+
 # Load your trained dx classification model. This function is *required*. You should edit this function to add your code, but do
 # *not* change the arguments of this function. If you do not train a dx classification model, then you can return None.
 def load_dx_model(model_folder, verbose):
     filename = os.path.join(model_folder, 'dx_model.sav')
     return joblib.load(filename)
+
 
 # Run your trained digitization model. This function is *required*. You should edit this function to add your code, but do *not*
 # change the arguments of this function.
@@ -168,6 +177,7 @@ def run_digitization_model(digitization_model, record, verbose):
 
     return signal
 
+
 # Run your trained dx classification model. This function is *required*. You should edit this function to add your code, but do
 # *not* change the arguments of this function.
 def run_dx_model(dx_model, record, signal, verbose):
@@ -188,6 +198,7 @@ def run_dx_model(dx_model, record, signal, verbose):
 
     return labels
 
+
 ################################################################################
 #
 # Optional functions. You can change or remove these functions and/or add new functions.
@@ -205,11 +216,13 @@ def extract_features(record):
         std += np.std(image)
     return np.array([mean, std])
 
+
 # Save your trained digitization model.
 def save_digitization_model(model_folder, model):
     d = {'model': model}
     filename = os.path.join(model_folder, 'digitization_model.sav')
     joblib.dump(d, filename, protocol=0)
+
 
 # Save your trained dx classification model.
 def save_dx_model(model_folder, model, classes):
