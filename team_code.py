@@ -14,7 +14,7 @@ import numpy as np
 import os
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 import sys
-
+from sklearn.model_selection import GridSearchCV, RandomizedSearchCV 
 from helper_code import *
 
 ################################################################################
@@ -116,13 +116,29 @@ def train_dx_model(data_folder, model_folder, verbose):
         print('Training the model on the data...')
 
     # Define parameters for random forest classifier and regressor.
-    n_estimators   = 12  # Number of trees in the forest.
-    max_leaf_nodes = 34  # Maximum number of leaf nodes in each tree.
+    # n_estimators   = 12  # Number of trees in the forest.
+    # max_leaf_nodes = 34  # Maximum number of leaf nodes in each tree.
     random_state   = 56  # Random state; set for reproducibility.
+    max_depth=3 
+    max_leaf_nodes=3
+    n_estimators=25
 
+    #Hyperparameters tuning
+
+    param_grid = { 
+        'n_estimators': [25, 50, 100, 150], 
+        'max_features': ['sqrt', 'log2', None], 
+        'max_depth': [3, 6, 9], 
+        'max_leaf_nodes': [3, 6, 9], 
+    } 
     # Fit the model.
     model = RandomForestClassifier(
         n_estimators=n_estimators, max_leaf_nodes=max_leaf_nodes, random_state=random_state).fit(features, dxs)
+
+    # model = GridSearchCV(RandomForestClassifier(), 
+    #                           param_grid=param_grid) 
+    # model.fit(features, dxs) 
+    # print(model.best_estimator_) 
 
     # Create a folder for the model if it does not already exist.
     os.makedirs(model_folder, exist_ok=True)
