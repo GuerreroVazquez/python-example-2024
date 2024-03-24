@@ -1,3 +1,26 @@
+# Submission for Hackathon McBio 2024
+## Team Pink bow
+Parisa Hatami 
+Karen Guerrero Vazquez
+
+The model was trained with the data specified on the challenge, keeping format of the template. Review other branches to see the process at their own risk.
+
+## How to run the model?
+
+    python run_model.py -d test_data -m model -o test_outputs
+
+
+## How to evaluate? (With a lot of kindness)
+
+    python evaluate_model.py -d labels -o test_outputs -s scores.cs
+
+
+
+-----------------------------------------------------------------
+
+
+
+
 # Python example code for the George B. Moody PhysioNet Challenge 2024
 
 ## What's in this repository?
